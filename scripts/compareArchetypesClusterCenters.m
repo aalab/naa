@@ -23,8 +23,9 @@ for data = [1 2 3 4]; % 1,2 has labels, 3 does not
             nSamFeat = rand(200,25) > 0.5; [nSam, nFeat] = size(nSamFeat); label = ones(nSam, 1);
             file = 'binsynth_save';
     end
+    disp(file)
     
-    if 1 %exist([file,'.mat']) == 0 % pre computed prototypes and associated information
+    if exist([file,'.mat']) == 0 % pre computed prototypes and associated information
         
         % -1 implies missing values, discard them from the analysis
         if any(data == [1,2])
@@ -119,6 +120,7 @@ for data = [1 2 3 4]; % 1,2 has labels, 3 does not
         fprintf('Dunns index AA: %0.6f\n',mydunns(d, clustAA))
         fprintf('Dunns index Clust: %0.6f\n',mydunns(d, clustBMix))
         fprintf('Rand index: %0.6f\n',myrands(clustAA, clustBMix))
+        fprintf('Rand index: %0.6f\n',myrands(clustAA, clustBMix(randperm(length(clustBMix)))))
 %       
         if 1
             

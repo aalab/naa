@@ -27,12 +27,12 @@ clear objListEM objListVB VBrecord
 KList = 3:10; maxTrial = 10; KPlot = 10; colorList = summer(maxTrial);
 for countK = KList
     for countTrial  = 1:maxTrial
-        if ~exist('selectArchetypeVB_1.mat')
+        if ~exist('compArchEMnVB_mult.mat')
             
-            [matSamLatEM, matLatSamEM, obj] = paa_ordinal_EM(nFeatSam, countK, options);
+            [matSamLatEM, matLatSamEM, obj] = paa_nominal_EM(nFeatSam, countK, options);
             objListEM(countK == KList, countTrial) = obj(end);
             
-            [matSamLatVB, matLatSamVB, obj] = paa_ordinal_VB(nFeatSam, countK, options);
+            [matSamLatVB, matLatSamVB, obj] = paa_nominal_VB(nFeatSam, countK, options);
             objListVB(countK == KList, countTrial) = obj(end);
             
             matSamLatEMList{countK == KList, countTrial} = matSamLatEM;
@@ -44,7 +44,7 @@ for countK = KList
             VBrecord(countK == KList, countTrial) = sum(max(bsxfun(@rdivide, matLatSamVB, sum(matLatSamVB)),[],2) > 0.7);
             
         else
-            load('selectArchetypeVB_1.mat')
+            load('compArchEMnVB_mult.mat')
         end
         
         if countK == KPlot
@@ -74,7 +74,7 @@ for countK = KList
             chullInd = convhull(matFeatLat(1:2,:)');
             plot(matFeatLat(1,chullInd),matFeatLat(2,chullInd),':','color',colorList(countTrial,:),'linewidth',LINEWIDTH)
             hold off, grid on, %axis([0 1 0 1 0 1])
-            title('(a) Example EM solution')
+            title('(a) Example EM solution','fontweight','normal')
             
             matSamLatVB = matSamLatVBList{countK == KList, countTrial};
             matLatSamVB = matLatSamVBList{countK == KList, countTrial};
@@ -89,21 +89,23 @@ for countK = KList
             chullInd = convhull(matFeatLat(1:2,:)');
             plot(matFeatLat(1,chullInd),matFeatLat(2,chullInd),':','color',colorList(countTrial,:),'linewidth',LINEWIDTH)
             hold off, grid on, %axis([0 1 0 1 0 1])
-            title('(b) Example VB solution')
+            title('(b) Example VB solution','fontweight','normal')
         end
         
         if countK == KPlot && countTrial == maxTrial
-            subplot(2,4,6), set(gca,'fontsize',FONTSIZE)
+            subplot(2,4,6),
             imagesc(matLatSamEM), colormap(flipud(gray))
             ylabel('Archetypes')
             xlabel('Samples')
-            title('(a'''') Example coefficient matrix, EM')
+            title('(a'''') Example coefficient matrix, EM','fontweight','normal')
+            set(gca,'fontsize',FONTSIZE)
             
-            subplot(2,4,8), set(gca,'fontsize',FONTSIZE)
+            subplot(2,4,8),
             imagesc(matLatSamVB), colormap(flipud(gray))
             ylabel('Archetypes')
             xlabel('Samples')
-            title('(b'''') Example coefficient matrix, VB')
+            title('(b'''') Example coefficient matrix, VB','fontweight','normal')
+            set(gca,'fontsize',FONTSIZE)
         end
         
         fprintf('[K = %d, Trial = %d]\n', countK, countTrial)
@@ -118,7 +120,7 @@ plot(KList, mean(objListEM,2),'-.k','linewidth',LINEWIDTH)
 ylabel('Objective function')
 xlabel('Given number of archetypes K')
 hold off
-title('(a'') Elbow criterion')
+title('(a'') Elbow criterion','fontweight','normal')
 
 figure(hMain)
 subplot(2,4,4), set(gca,'fontsize',FONTSIZE), box on
@@ -133,7 +135,7 @@ end
 ylabel('# of inferred arch.')
 xlabel('Given number of archetypes K')
 hold off, axis([min(KList)-1 max(KList)+1 min(KList)-1 7]) % max(KList)+1
-title('(b'') Redundancy criterion')
+title('(b'') Redundancy criterion','fontweight','normal')
 
 subplot(2,4,[1,5]);
 set(gca,'xlim',[0 1],'ylim',[0 0.8])
@@ -141,20 +143,19 @@ subplot(2,4,[3,7]);
 set(gca,'xlim',[0 1],'ylim',[0 0.8])
 
 if flagSave
-    save selectArchetypeVB_1.mat objListEM objListVB VBrecord nFeatSam ...
+    save compArchEMnVB_mult.mat objListEM objListVB VBrecord nFeatSam ...
         matSamLatEMList matLatSamEMList matSamLatVBList matLatSamVBList
-    figureName = 'selarch.eps';
+    figureName = 'compArchEMnVB_mult';
     print('-dpng','-r400',[figureName,'.png']), 
-    % saveas(gcf,figureName,'epsc')
-    % !epstopdf selarch.eps
+    % saveas(gcf,[figureName,'.eps'],'epsc')
+    % !epstopdf compArchEMnVB_mult.eps
 end
 
 %% Binary observations
-addpath package
 close all, clear all
 
 rng default
-MARKERSIZE = 2; FONTSIZE = 6;
+MARKERSIZE = 2; FONTSIZE = 6; flagSave = false;
 
 d = 10; K = 5; n = 100; gammaParam = 0.3;
 matFeatLat = rand(d,K) > 0.5; nFeat = size(matFeatLat,1);
@@ -188,11 +189,11 @@ KList = 3:10; maxTrial = 10; KPlot = 8; colorList = summer(maxTrial);
 
 for countK = KList
     for countTrial  = 1:maxTrial
-        if ~exist('selectArchetypeVB_2.mat')
-            [matSamLatEM, matLatSamEM, obj] = paa_ordinal_EM(nFeatSam, countK, options);
+        if ~exist('compArchEMnVB_bin.mat')
+            [matSamLatEM, matLatSamEM, obj] = paa_nominal_EM(nFeatSam, countK, options);
             objListEM(countK == KList, countTrial) = obj(end);
             
-            [matSamLatVB, matLatSamVB, obj] = paa_ordinal_VB(nFeatSam, countK, options);
+            [matSamLatVB, matLatSamVB, obj] = paa_nominal_VB(nFeatSam, countK, options);
             objListVB(countK == KList, countTrial) = obj(end);
             
             VBrecord(countK == KList, countTrial) = sum(max(bsxfun(@rdivide, matLatSamVB, sum(matLatSamVB)),[],2) > 0.1);
@@ -204,7 +205,7 @@ for countK = KList
             matSamLatVBList{countK == KList, countTrial} = matSamLatVB;
             matLatSamVBList{countK == KList, countTrial} = matLatSamVB;
         else
-            load('selectArchetypeVB_2.mat')
+            load('compArchEMnVB_bin.mat')
         end
         
         
@@ -232,7 +233,7 @@ for countK = KList
                 
                 subplot(2,4,[1,5]); axis([1,countK,0,maxTrial+2]), axis off
                 set(gca,'fontsize',FONTSIZE)
-                title('(a) Example EM solution')  
+                title('(a) Example EM solution','fontweight','normal')  
                 text(1:K,(maxTrial+1)*ones(1,K),num2str(archetypesTrue(:,1)),...
                     'fontsize',4,'backgroundcolor',[1 1 1]);%[0.6 0.6 0.6]);
                 text(0,(maxTrial+1),'true',...
@@ -242,7 +243,7 @@ for countK = KList
                 
                 subplot(2,4,[3,7]); axis([1,countK,0,maxTrial+2]), axis off
                 set(gca,'fontsize',FONTSIZE)
-                title('(b) Example VB solution')
+                title('(b) Example VB solution','fontweight','normal')
                 text(1:K,(maxTrial+1)*ones(1,K),num2str(archetypesTrue(:,1)),...
                     'fontsize',4,'backgroundcolor',[1 1 1]);%[0.6 0.6 0.6]);
                 text(0,(maxTrial+1),'true',...
@@ -297,17 +298,19 @@ for countK = KList
         
         if countK == KPlot && countTrial == 1
 
-            subplot(2,4,6), set(gca,'fontsize',FONTSIZE)
+            subplot(2,4,6), 
             imagesc(matLatSamEM), colormap(flipud(gray))
             ylabel('Archetypes')
             xlabel('Samples')
-            title('(a'''') Example coefficient matrix, EM')
+            title('(a'''') Example coefficient matrix, EM','fontweight','normal')
+            set(gca,'fontsize',FONTSIZE)
             
-            subplot(2,4,8), set(gca,'fontsize',FONTSIZE)
+            subplot(2,4,8), 
             imagesc(matLatSamVB), colormap(flipud(gray))
             ylabel('Archetypes')
             xlabel('Samples')
-            title('(b'''') Example coefficient matrix, VB')
+            title('(b'''') Example coefficient matrix, VB','fontweight','normal')
+            set(gca,'fontsize',FONTSIZE)
         end
     end
 end
@@ -320,7 +323,7 @@ plot(KList, mean(objListEM,2),'-.k')
 ylabel('Objective function')
 xlabel('Given number of archetypes K')
 hold off
-title('(a'') Elbow criterion')
+title('(a'') Elbow criterion','fontweight','normal')
 set(gca,'ytick',[])
 
 figure(hMain),
@@ -339,15 +342,15 @@ set(gca,'yaxislocation','right','xlim',[2 11])
 text(1,0,'# of inferred arch.','fontsize',FONTSIZE,'rotation',90)
 xlabel('Given number of archetypes K')
 hold off, 
-title('(b'') Redundancy criterion')
+title('(b'') Redundancy criterion','fontweight','normal')
 % 
 if flagSave
-    save selectArchetypeVB_2.mat objListEM objListVB VBrecord nFeatSam matFeatSam ...
+    save compArchEMnVB_bin.mat objListEM objListVB VBrecord nFeatSam matFeatSam ...
         matFeatLat matSamLatEMList matLatSamEMList matSamLatVBList matLatSamVBList archetypesTrue
-    figureName = 'selarch2.eps';
-    print('-dpng','-r400',[figureName,'.png']), 
-    % saveas(gcf,figureName,'epsc')
-    % !epstopdf selarch.eps
+    figureName = 'compArchEMnVB_bin';
+    print('-dpng','-r800',[figureName,'.png']), 
+    % saveas(gcf,[figureName,'.eps'],'epsc')
+    % !epstopdf compArchEMnVB_bin.eps
 end
 
 %intersect(samples(:,1),archetypesInferredEM(:,1))'
@@ -358,9 +361,7 @@ end
 
 %% Bernoulli, inferring correct number of archetypes
 close all, clear all, rng default
-MARKERSIZE = 6; FONTSIZE = 8;
-
-nFeat = 16; n = 1000; gammaParam = 0.3;
+nFeat = 16; gammaParam = 0.3;
 options = generate_options();
 options.maxIter = 1000;
 options.verbose = 0;
@@ -370,75 +371,82 @@ options.priorMatSamLat = 0.1;
 clear VBrecord inferredK objectListVB matSamLatVBList matLatSamVBList matFeatLatList matLatSamList archetypesTrueList
 paramList = 0.3; trueKList = 3:1:8; KList = 20; maxTrial = 10;
 
-if ~exist('selectArchetypeVB_3.mat')
-    for param = paramList
-        options.priorMatLatSam = param;
-        for countTrial = 1:maxTrial
-            
-            for K = trueKList
+for n = [500, 1000]
+    if ~exist(['compArchEMnVB_',num2str(n),'.mat'])
+        for param = paramList
+            options.priorMatLatSam = param;
+            for countTrial = 1:maxTrial
                 
-                archetypesTrue = 1;
-                while length(unique(archetypesTrue)) ~= K
-                    matFeatLat = rand(nFeat,K) > 0.5;
-                    matLatSam = gamrnd(gammaParam, 1, K, n); matLatSam = bsxfun(@rdivide, matLatSam, sum(matLatSam));
-                    matFeatSam = rand(nFeat, n) < (matFeatLat * matLatSam);
-                    samples = myunique(bin2dec(num2str(matFeatSam')));
-                    archetypesTrue = sort(myunique(bin2dec(num2str(matFeatLat')),true));
-                end
-                matFeatLatList{K == trueKList, param == paramList, countTrial} = matFeatLat;
-                matLatSamList{K == trueKList, param == paramList, countTrial} = matLatSam;
-                matFeatSamList{K == trueKList, param == paramList, countTrial} = matFeatSam;
-                archetypesTrueList{K == trueKList, param == paramList, countTrial} = archetypesTrue;
-                
-                for countFeat = 1:size(matFeatLat, 1)
-                    nFeatSam{countFeat}(1,:) = matFeatSam(countFeat,:);
-                    nFeatSam{countFeat}(2,:) = 1 - nFeatSam{countFeat}(1,:);
-                end
-                
-                for countK = KList
-                    for rndTrial  = 1:10
-                        
-                        [matSamLatVB, matLatSamVB, obj] = paa_ordinal_VB(nFeatSam, countK, options);
-                        objListVB(K == trueKList, param == paramList, countTrial, countK == KList, rndTrial) = obj(end);
-                        
-                        VBrecord(K == trueKList, param == paramList, countTrial, countK == KList, rndTrial) = ...
-                            sum(max(bsxfun(@rdivide, matLatSamVB, sum(matLatSamVB)),[],2) > 0.1);
-                        
-                        matSamLatVBList{K == trueKList, param == paramList, countTrial, countK == KList, rndTrial} = matSamLatVB;
-                        matLatSamVBList{K == trueKList, param == paramList, countTrial, countK == KList, rndTrial} = matLatSamVB;
-                        
-                        fprintf('[trueK = %d, param = %0.1f, K = %d, Trial = %d]\n', K, param, countK, countTrial)
+                for K = trueKList
+                    
+                    archetypesTrue = 1;
+                    while length(unique(archetypesTrue)) ~= K
+                        matFeatLat = rand(nFeat,K) > 0.5;
+                        matLatSam = gamrnd(gammaParam, 1, K, n); matLatSam = bsxfun(@rdivide, matLatSam, sum(matLatSam));
+                        matFeatSam = rand(nFeat, n) < (matFeatLat * matLatSam);
+                        samples = myunique(bin2dec(num2str(matFeatSam')));
+                        archetypesTrue = sort(myunique(bin2dec(num2str(matFeatLat')),true));
+                    end
+                    matFeatLatList{K == trueKList, param == paramList, countTrial} = matFeatLat;
+                    matLatSamList{K == trueKList, param == paramList, countTrial} = matLatSam;
+                    matFeatSamList{K == trueKList, param == paramList, countTrial} = matFeatSam;
+                    archetypesTrueList{K == trueKList, param == paramList, countTrial} = archetypesTrue;
+                    
+                    for countFeat = 1:size(matFeatLat, 1)
+                        nFeatSam{countFeat}(1,:) = matFeatSam(countFeat,:);
+                        nFeatSam{countFeat}(2,:) = 1 - nFeatSam{countFeat}(1,:);
                     end
                     
-                    [~, ind] = max(squeeze(objListVB(K == trueKList, param == paramList, countTrial, countK == KList, :)));
-                    inferredK(K == trueKList, param == paramList, countTrial, countK == KList) = ...
-                        VBrecord(K == trueKList, param == paramList, countTrial, countK == KList, ind);
+                    for countK = KList
+                        for rndTrial  = 1:10
+                            
+                            [matSamLatVB, matLatSamVB, obj] = paa_nominal_VB(nFeatSam, countK, options);
+                            objListVB(K == trueKList, param == paramList, countTrial, countK == KList, rndTrial) = obj(end);
+                            
+                            VBrecord(K == trueKList, param == paramList, countTrial, countK == KList, rndTrial) = ...
+                                sum(max(bsxfun(@rdivide, matLatSamVB, sum(matLatSamVB)),[],2) > 0.1);
+                            
+                            matSamLatVBList{K == trueKList, param == paramList, countTrial, countK == KList, rndTrial} = matSamLatVB;
+                            matLatSamVBList{K == trueKList, param == paramList, countTrial, countK == KList, rndTrial} = matLatSamVB;
+                            
+                            fprintf('[trueK = %d, param = %0.1f, K = %d, Trial = %d]\n', K, param, countK, countTrial)
+                        end
+                        
+                        [~, ind] = max(squeeze(objListVB(K == trueKList, param == paramList, countTrial, countK == KList, :)));
+                        inferredK(K == trueKList, param == paramList, countTrial, countK == KList) = ...
+                            VBrecord(K == trueKList, param == paramList, countTrial, countK == KList, ind);
+                    end
                 end
             end
         end
+        if flagSave
+            save(['compArchEMnVB_',num2str(n),'.mat'], ...
+                'objListVB', 'VBrecord', 'matFeatLatList', ...
+                'matLatSamList', 'archetypesTrueList', 'matSamLatVBList', ...
+                'matLatSamVBList', 'inferredK', 'matFeatSamList')
+        end
     end
-    if flagSave
-        save selectArchetypeVB_3.mat objListVB VBrecord matFeatLatList matLatSamList archetypesTrueList matSamLatVBList matLatSamVBList inferredK matFeatSamList
-    end
-else
-    load('selectArchetypeVB_3.mat')
 end
 
+paramList = 0.3; trueKList = 3:1:8; KList = 20; maxTrial = 10;
+MARKERSIZE = 6; FONTSIZE = 8; flagSave = false;
 hMain = figure('papersize',[8.5 11],'paperposition',[0 0 3 2]);
 nList = [500, 1000];
 faceColorList = [[0.5, 0.5, 0.5]; [0.3, 0.3, 0.3]];
 edgeColorList = [[0.5, 0.5, 0.5]; [0.3, 0.3, 0.3]];
 biasList = [-0.1 , 0.1];
 hold on
-plot(0, 0, 'o', 'markerfacecolor', faceColorList(1,:),'markeredgecolor',edgeColorList(1,:))
-plot(0, 0, 'o', 'markerfacecolor', faceColorList(2,:),'markeredgecolor',edgeColorList(1,:))
+plot(0, 0, 'o', 'markerfacecolor', faceColorList(1,:), ...
+    'markeredgecolor',edgeColorList(1,:))
+plot(0, 0, 'o', 'markerfacecolor', faceColorList(2,:), ...
+    'markeredgecolor',edgeColorList(2,:))
 legend({['n = ',num2str(nList(1))],['n = ',num2str(nList(2))]},'location','southeast')
 for n = nList
     switch n
         case 500
-            load selectArchetypeVB_3_backup.mat
+            load compArchEMnVB_500_infK.mat inferredK
         case 1000
-            load selectArchetypeVB_3.mat
+            load compArchEMnVB_1000_infK.mat inferredK
     end
     for param = paramList
         hold on
@@ -458,67 +466,8 @@ for n = nList
     xlabel('# of true archetypes','fontsize',FONTSIZE)
 end
 hold off
-%figureName = 'selarch3.eps';
-%saveas(gcf,figureName,'epsc')
-
-%% Simple example for paper
-clear all, rng(1000),
-clear J
-gammaParam = 2; K = 3; n = 250;
-matFeatLat{1} = [[0.6 0.3 0.1]; [0.1 0.8 0.1]; [0.2 0.0 0.8]]';
-matFeatLat{2} = [[0.1 0.8 0.1]; [0.1 0.3 0.6]; [0.4 0.4 0.2]]';
-matFeatLat{3} = [[0.9 0.1]; [0.3 0.7]; [0.5 0.5]]';
-matFeatLat{4} = [[0.2 0.7 0.1]; [0.0 0.8 0.2]; [0.0 0.0 1]]';
-matFeatLat{5} = [[0.7 0.2 0.1]; [0.0 0.2 0.8]; [0.0 0.0 1]]';
-matFeatLat{6} = [[0.5 0.5]; [0.2 0.8]; [0.5 0.5]]';
-matLatSam = gamrnd(gammaParam, 1, K, n); matLatSam = bsxfun(@rdivide, matLatSam, sum(matLatSam));
-for count = 1:length(matFeatLat)
-    matFeatSam{count} = matFeatLat{count} * matLatSam;
-    %matFeatSam{count} = bsxfun(@rdivide, matFeatSam{count}, sum(matFeatSam{count}));
-    nFeatSam{count} = mnrnd(1,matFeatSam{count}')';
-    [J(count,:), ~] = ind2sub(size(nFeatSam{count}), find(nFeatSam{count}));
+if flagSave
+    figureName = 'numArchVB';
+    print('-dpng','-r400',[figureName,'.png']), 
+    saveas(gcf,[figureName,'.eps'],'epsc')
 end
-matLatSamTrue = matLatSam;
-matFeatLatTrue = matFeatLat;
-clear matLatSam
-
-addpath package/
-options = generate_options();
-options.eps = 10^-6;
-options.verbose = true;
-options.display = false;
-options.maxIter = 500;
-options.priorMatSamLat = 0.1;
-options.priorMatLatSam = 0.3;
-EM = true;
-for countRun = 1:10
-    if EM
-        [matSamLat{countRun}, matLatSam{countRun}, obj{countRun}] = paa_ordinal_EM(nFeatSam, 3, options);
-    else
-        [matSamLat{countRun}, matLatSam{countRun}, obj{countRun}] = paa_ordinal_VB(nFeatSam, 20, options);
-    end
-end
-costs = cellfun(@(x)(x(end)),obj);
-[~, ind] = max(costs);
-
-matLatSam = matLatSam{ind};
-matSamLat = matSamLat{ind};
-if ~EM
-    ind = max(bsxfun(@rdivide, matLatSam, sum(matLatSam)), [], 2) > 0.1;
-    temp = matSamLat(:, ind);
-    temp = bsxfun(@rdivide, temp, sum(temp));
-else
-    temp = matSamLat;
-end
-for count = 1:length(matFeatLat)
-    matFeatLat{count} = nFeatSam{count} * temp;
-end
-
-cell2mat(matFeatLat') 
-cell2mat(matFeatLatTrue')
-
-subplot(211); imagesc(matLatSam)
-subplot(212); imagesc(matLatSamTrue)
-
-% save simpleExample.mat matFeatLat matLatSam matSamLat matLatSamTrue matFeatLatTrue nFeatSam
-%bsxfun(@rdivide, matLatSam(ind,:), sum(matLatSam(ind,:)))

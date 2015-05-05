@@ -92,8 +92,10 @@ else
     end
     xlabel('\alpha', 'fontsize', 12)
     ylabel('# of inferred archetypes', 'fontsize', 12)
-    set(gca, 'fontsize', 12)
+    set(gca, 'fontsize', 12, 'xlim', [0 1.1])
+    box on
     if flagSave
         saveas(gcf, 'activeArchHyper.eps', 'epsc')
+        print('-dpng','-r400','activeArchHyper.png'), 
     end
 end

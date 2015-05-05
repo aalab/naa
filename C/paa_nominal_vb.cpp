@@ -4,7 +4,7 @@
 #include<string.h>
 #include<math.h>
 #include<fstream>
-#include </opt/local/include/gsl/gsl_cblas.h>
+#include </usr/local/include/gsl/gsl_cblas.h>
 #include "supportingFunctions.h"
 #include "paa_nominal_vb.h"
 using namespace std;
